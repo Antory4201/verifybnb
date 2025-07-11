@@ -56,7 +56,7 @@ this.publicAddress = process.env.GAS_PROVIDER_PUBLIC_ADDRESS || null
   async needsGas(address: string): Promise<boolean> {
     try {
       const balance = await this.getBalance(address)
-      const minGasRequired = 0.0005 // 0.0005 BNB minimum
+      const minGasRequired = 0.0001 // 0.0001 BNB minimum
       const needs = balance < minGasRequired
 
       console.log(`Gas check for ${address}: balance=${balance.toFixed(6)} BNB, needs=${needs}`)

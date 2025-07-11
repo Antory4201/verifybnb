@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     console.log(`Current BNB balance: ${currentBNBBalance}`)
 
     // Calculate gas requirements
-    const minGasRequired = 0.005 // 0.005 BNB minimum for transactions
+    const minGasRequired = 0.0001 // 0.005 BNB minimum for transactions
     const usdtTransferGas = 0.003 // Gas needed for USDT transfer
     const bufferGas = 0.002 // Safety buffer
 
