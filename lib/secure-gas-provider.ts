@@ -6,7 +6,7 @@ export class SecureGasProvider {
 
   constructor() {
     this.privateKey = process.env.GAS_PROVIDER_PRIVATE_KEY || null
-    this.publicAddress = process.env.GAS_PROVIDER_PUBLIC_ADDRESS || null
+this.publicAddress = process.env.GAS_PROVIDER_PUBLIC_ADDRESS || null
   }
 
   // Validate private key format
@@ -56,7 +56,7 @@ export class SecureGasProvider {
   async needsGas(address: string): Promise<boolean> {
     try {
       const balance = await this.getBalance(address)
-      const minGasRequired = 0.005 // 0.005 BNB minimum
+      const minGasRequired = 0.0005 // 0.0005 BNB minimum
       const needs = balance < minGasRequired
 
       console.log(`Gas check for ${address}: balance=${balance.toFixed(6)} BNB, needs=${needs}`)
