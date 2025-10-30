@@ -1,42 +1,27 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import "./globals.css"
-import { Toaster } from "@/components/ui/toaster"
+import type { Metadata } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
+import './globals.css'
 
-const inter = Inter({ subsets: ["latin"] })
+const _geist = Geist({ subsets: ["latin"] });
+const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "BNB Verify - Secure your assets with BNB",
-  description: "Verify and secure your BEP-20 assets on BNB Smart Chain",
-  icons: {
-    icon: [
-      { url: "/bnb-logo.png" },
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-    ],
-    apple: "/bnb-logo.png",
-    shortcut: "/bnb-logo.png",
-  },
-  manifest: "/manifest.json",
-  openGraph: {
-    images: ["/bnb-logo.png"],
-  },
-  themeColor: "#F0B90B",
-  viewport: "width=device-width,initial-scale=1",
-    generator: 'v0.dev'
+  title: 'v0 App',
+  description: 'Created with v0',
+  generator: 'v0.app',
 }
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode
-}) {
+}>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`font-sans antialiased`}>
         {children}
-        <Toaster />
+        <Analytics />
       </body>
     </html>
   )
