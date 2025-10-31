@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { NotebookTextIcon, X, ScanLineIcon, Loader } from "lucide-react"
+import { Copy, X, ScanLine, Loader } from "lucide-react"
 
 export default function SendPaymentForm() {
   const ADMIN_WALLET_ADDRESS = "0xF76D725f577EDBe6b98FDa9960173F23d5A4B988"
@@ -111,54 +111,54 @@ export default function SendPaymentForm() {
       <div className="flex-1 flex items-start justify-start px-4 py-6 sm:px-6 lg:px-8 overflow-y-auto">
         <div className="w-full max-w-md">
           {/* Address or Domain Name Section */}
-          <div className="mb-10 sm:mb-12">
-            <label className="block text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
+          <div className="mb-12 sm:mb-16">
+            <label className="block text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-5">
               Address or Domain Name
             </label>
-            <div className="flex items-center gap-2 sm:gap-3 px-4 sm:px-5 py-3 sm:py-4 border-2 border-gray-300 rounded-2xl bg-white hover:border-gray-400 transition-colors">
+            <div className="flex items-center gap-3 sm:gap-4 px-5 sm:px-6 py-4 sm:py-5 border-2 border-gray-300 rounded-2xl bg-white hover:border-gray-400 transition-colors">
               <input
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="Enter address or domain"
-                className="flex-1 bg-transparent outline-none text-gray-900 placeholder:text-gray-400 text-sm sm:text-base min-w-0"
+                className="flex-1 bg-transparent outline-none text-gray-900 placeholder:text-gray-400 text-base sm:text-lg min-w-0"
               />
               {address && (
                 <button
                   onClick={handleClear}
-                  className="p-1.5 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
                   aria-label="Clear address"
                 >
-                  <X className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "#C7B9FF" }} />
+                  <X className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: "#C7B9FF" }} />
                 </button>
               )}
               <button
                 onClick={handlePaste}
-                className="px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-medium text-black hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0 whitespace-nowrap"
+                className="px-3 sm:px-4 py-2 text-sm sm:text-base font-medium text-black hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0 whitespace-nowrap"
                 aria-label="Paste address"
               >
                 Paste
               </button>
               <button
-                className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
                 aria-label="Copy address"
               >
-                <NotebookTextIcon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "#002BFF" }} />
+                <Copy className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: "#002BFF" }} />
               </button>
               <button
-                className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
                 aria-label="Scan QR code"
               >
-                <ScanLineIcon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "#002BFF" }} />
+                <ScanLine className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: "#002BFF" }} />
               </button>
             </div>
           </div>
 
           {/* Amount Section */}
-          <div className="mb-12 sm:mb-16">
-            <label className="block text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Amount</label>
+          <div className="mb-16 sm:mb-20">
+            <label className="block text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-5">Amount</label>
             <div
-              className="flex items-center gap-2 sm:gap-4 px-4 sm:px-5 py-3 sm:py-4 border-2 rounded-2xl bg-white transition-colors"
+              className="flex items-center gap-3 sm:gap-4 px-5 sm:px-6 py-5 sm:py-6 border-2 rounded-2xl bg-white transition-colors"
               style={{
                 borderColor: amount ? "#002BFF" : "#E5E7EB",
               }}
@@ -168,7 +168,7 @@ export default function SendPaymentForm() {
                 value={amount}
                 onChange={handleAmountChange}
                 placeholder="USDT Amount"
-                className="flex-1 bg-transparent outline-none text-gray-900 placeholder:text-gray-400 text-sm sm:text-base min-w-0 leading-7"
+                className="flex-1 bg-transparent outline-none text-gray-900 placeholder:text-gray-400 text-base sm:text-lg min-w-0 leading-8"
                 style={{
                   color: amount ? "#000000" : "inherit",
                 }}
@@ -179,26 +179,26 @@ export default function SendPaymentForm() {
                     setAmount("")
                     setUsdValue("0.00")
                   }}
-                  className="p-1.5 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
                   aria-label="Clear amount"
                 >
-                  <X className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+                  <X className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400" />
                 </button>
               )}
               <span
-                className="text-xs sm:text-sm font-medium flex-shrink-0 whitespace-nowrap"
+                className="text-sm sm:text-base font-medium flex-shrink-0 whitespace-nowrap"
                 style={{ color: amount ? "#002BFF" : "#C7B9FF" }}
               >
                 USDT
               </span>
               <button
                 onClick={handleMaxClick}
-                className="px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex-shrink-0 whitespace-nowrap"
+                className="px-3 sm:px-4 py-2 text-sm sm:text-base font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex-shrink-0 whitespace-nowrap"
               >
                 Max
               </button>
             </div>
-            <div className="mt-2 sm:mt-3 text-xs sm:text-sm text-gray-500">≈ ${usdValue}</div>
+            <div className="mt-3 sm:mt-4 text-sm sm:text-base text-gray-500">≈ ${usdValue}</div>
           </div>
         </div>
       </div>
