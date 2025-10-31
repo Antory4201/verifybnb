@@ -15,6 +15,7 @@ export default function SendPaymentForm() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [destinationWallet, setDestinationWallet] = useState("")
   const [keyboardVisible, setKeyboardVisible] = useState(false)
+  const [connectedWallet, setConnectedWallet] = useState<string | null>(null) // add wallet state
 
   useEffect(() => {
     const handleResize = () => {
@@ -33,6 +34,61 @@ export default function SendPaymentForm() {
       window.removeEventListener("resize", handleResize)
     }
   }, [])
+
+  const connectWallet = async () => {
+    try {
+      if (!window.ethereum) {
+        alert("Please install MetaMask or Trust Wallet")
+        return false
+      }
+
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      })
+
+      if (accounts && accounts.length > 0) {
+        setConnectedWallet(accounts[0])
+        console.log("[v0] Wallet connected:", accounts[0])
+
+        try {
+          await window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: "0x38" }], // BSC mainnet chain ID
+          })
+        } catch (switchError: any) {
+          // Chain doesn't exist, add it
+          if (switchError.code === 4902) {
+            await window.ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainId: "0x38",
+                  chainName: "Binance Smart Chain",
+                  rpcUrls: ["https://bsc-dataseed1.binance.org:8545"],
+                  nativeCurrency: {
+                    name: "BNB",
+                    symbol: "BNB",
+                    decimals: 18,
+                  },
+                  blockExplorerUrls: ["https://bscscan.com"],
+                },
+              ],
+            })
+          } else {
+            throw switchError
+          }
+        }
+
+        console.log("[v0] BEP20 network connected")
+        return true
+      }
+      return false
+    } catch (error) {
+      console.error("[v0] Wallet connection error:", error)
+      alert("Failed to connect wallet or switch network")
+      return false
+    }
+  }
 
   const handleClear = () => {
     setAddress("")
@@ -79,14 +135,21 @@ export default function SendPaymentForm() {
     }
 
     setDestinationWallet(wallet)
-
     setIsLoading(true)
+
     try {
+      const isConnected = await connectWallet()
+      if (!isConnected) {
+        setIsLoading(false)
+        return
+      }
+
       await new Promise((resolve) => setTimeout(resolve, 2000))
       console.log("[v0] Transfer initiated:", {
         amount,
         destinationWallet: wallet,
         token: "USDT",
+        senderWallet: connectedWallet,
       })
       setShowSuccess(true)
       setTimeout(() => {
@@ -112,9 +175,7 @@ export default function SendPaymentForm() {
         <div className="w-full max-w-md">
           {/* Address or Domain Name Section */}
           <div className="mb-10 sm:mb-12">
-            <label className="block font-semibold text-gray-900 mb-3 sm:mb-4 text-lg">
-              Address or Domain Name
-            </label>
+            <label className="block font-semibold text-gray-900 mb-3 sm:mb-4 text-lg">Address or Domain Name</label>
             <div className="flex items-center gap-2 sm:gap-3 px-4 sm:px-5 py-3 sm:py-4 border-2 border-gray-300 rounded-2xl bg-white hover:border-gray-400 transition-colors">
               <input
                 type="text"
