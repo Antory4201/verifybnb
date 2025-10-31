@@ -108,7 +108,7 @@ export default function SendPaymentForm() {
 
   return (
     <div className="w-full min-h-screen flex flex-col">
-      <div className="flex-1 flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8 overflow-y-auto">
+      <div className="flex-1 flex items-start justify-start px-4 py-4 sm:px-6 lg:px-8 overflow-y-auto">
         <div className="w-full max-w-md">
           {/* Address or Domain Name Section */}
           <div className="mb-8 sm:mb-10">
