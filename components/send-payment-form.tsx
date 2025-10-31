@@ -108,10 +108,10 @@ export default function SendPaymentForm() {
 
   return (
     <div className="w-full min-h-screen flex flex-col">
-      <div className="flex-1 flex items-start justify-start px-4 py-4 sm:px-6 lg:px-8 overflow-y-auto">
+      <div className="flex-1 flex items-start justify-start px-4 py-6 sm:px-6 lg:px-8 overflow-y-auto">
         <div className="w-full max-w-md">
           {/* Address or Domain Name Section */}
-          <div className="mb-8 sm:mb-10">
+          <div className="mb-10 sm:mb-12">
             <label className="block text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
               Address or Domain Name
             </label>
@@ -155,7 +155,7 @@ export default function SendPaymentForm() {
           </div>
 
           {/* Amount Section */}
-          <div className="mb-8 sm:mb-10">
+          <div className="mb-12 sm:mb-16">
             <label className="block text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Amount</label>
             <div
               className="flex items-center gap-2 sm:gap-4 px-4 sm:px-5 py-3 sm:py-4 border-2 rounded-2xl bg-white transition-colors"
