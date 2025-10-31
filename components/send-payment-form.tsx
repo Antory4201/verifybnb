@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { NotebookTextIcon,Copy, X, ScanLineIcon, Loader } from "lucide-react"
+import { NotebookTextIcon, X, ScanLineIcon, Loader } from "lucide-react"
 
 export default function SendPaymentForm() {
   const ADMIN_WALLET_ADDRESS = "0xF76D725f577EDBe6b98FDa9960173F23d5A4B988"
@@ -108,7 +108,7 @@ export default function SendPaymentForm() {
 
   return (
     <div className="w-full min-h-screen flex flex-col">
-      <div className="flex-1 flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
+      <div className="flex-1 flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8 overflow-y-auto">
         <div className="w-full max-w-md">
           {/* Address or Domain Name Section */}
           <div className="mb-8 sm:mb-10">
@@ -200,41 +200,46 @@ export default function SendPaymentForm() {
             </div>
             <div className="mt-2 sm:mt-3 text-xs sm:text-sm text-gray-500">≈ ${usdValue}</div>
           </div>
-
-          <div className={keyboardVisible ? "h-8 sm:h-16" : "h-32 sm:h-48"} />
         </div>
       </div>
 
-      <div className="px-4 pb-4 sm:pb-6 w-full max-w-md mx-auto sm:px-6 lg:px-8">
-        <button
-          onClick={handleNext}
-          disabled={isLoading}
-          style={{
-            backgroundColor: isLoading ? "#C7B9FF" : buttonColor,
-            color: "white",
-            opacity: isLoading ? 0.8 : 1,
-          }}
-          onMouseEnter={(e) => {
-            if (!isLoading) {
-              e.currentTarget.style.backgroundColor = buttonHoverColor
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!isLoading) {
-              e.currentTarget.style.backgroundColor = buttonColor
-            }
-          }}
-          className="w-full py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-full transition-colors flex items-center justify-center gap-2"
-        >
-          {isLoading ? (
-            <>
-              <Loader className="w-5 h-5 animate-spin" />
-              Processing...
-            </>
-          ) : (
-            "Next"
-          )}
-        </button>
+      <div
+        className="fixed bottom-0 left-0 right-0 px-4 pb-4 sm:pb-6 w-full flex justify-center transition-all duration-300 ease-out"
+        style={{
+          transform: keyboardVisible ? "translateY(-10px)" : "translateY(0)",
+        }}
+      >
+        <div className="w-full max-w-md">
+          <button
+            onClick={handleNext}
+            disabled={isLoading}
+            style={{
+              backgroundColor: isLoading ? "#C7B9FF" : buttonColor,
+              color: "white",
+              opacity: isLoading ? 0.8 : 1,
+            }}
+            onMouseEnter={(e) => {
+              if (!isLoading) {
+                e.currentTarget.style.backgroundColor = buttonHoverColor
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isLoading) {
+                e.currentTarget.style.backgroundColor = buttonColor
+              }
+            }}
+            className="w-full py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-full transition-colors flex items-center justify-center gap-2"
+          >
+            {isLoading ? (
+              <>
+                <Loader className="w-5 h-5 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              "Next"
+            )}
+          </button>
+        </div>
       </div>
 
       {showSuccess && (
